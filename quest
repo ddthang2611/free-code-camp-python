@@ -1,0 +1,3 @@
+Right after declaring the result variable, create a for loop that uses enumeration to iterate over the items in the catalogue and appends to result a string with the following format: N. movie where N is a numeric index starting from 1 and movie is the string representation of the item.
+
+Make the string end with a newline character and return result after the loop.

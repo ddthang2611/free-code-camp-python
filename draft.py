@@ -1,74 +1,74 @@
-class Movie:
-    """Parent class representing a movie."""
+class Employee:
     
-    def __init__(self, title, year, director, duration):
-        if not title.strip():
-            raise ValueError("Title cannot be empty")
-        if year < 1895:
-            raise ValueError("Year must be 1895 or later")
-        if not director.strip():
-            raise ValueError("Director cannot be empty")
-        if duration <= 0:
-            raise ValueError("Duration must be positive")
-        self.title = title
-        self.year = year
-        self.director = director
-        self.duration = duration
-
-    def __str__(self):
-        return f"{self.title} ({self.year}) - {self.duration} min, {self.director}"
-
-class TVSeries(Movie):
-    """Child class representing an entire TV series."""
-
-    def __init__(self, title, year, director, duration, seasons, total_episodes):
-        super().__init__(title, year, director, duration)
-
-        if seasons < 1:
-            raise ValueError("Seasons must be 1 or greater")
-        if total_episodes < 1:
-            raise ValueError("Total episodes must be 1 or greater")
+    _base_salaries = {
+        'trainee': 1000,
+        'junior': 2000,
+        'mid-level': 3000,
+        'senior': 4000
+    }
+    
+    def __init__(self, name, level):
+        if not isinstance(name, str) or not isinstance(level, str):
+            raise TypeError("'name' and 'level' attribute must be of type 'str'.")
         
-        self.seasons = seasons
-        self.total_episodes = total_episodes
-
-    def __str__(self):
-        return f"{self.title} ({self.year}) - {self.seasons} seasons, {self.total_episodes} episodes, {self.duration} min avg, {self.director}"
-
-class MediaCatalogue:
-    """A catalogue that can store different types of media items."""
-
-    def __init__(self):
-        self.items = []
-    def add(self, media_item):
-        if not isinstance(media_item, Movie):
-            raise ValueError("Only Movie or TVSeries instances can be added")
-        self.items.append(media_item)
-
-
-    def __str__(self):
-        if not self.items:
-            return "Media Catalogue (empty)"
-
-        result = f"Media Catalogue ({len(self.items)} items):\n\n"
+        if level not in Employee._base_salaries:
+            raise ValueError(f"Invalid value '{level}' for 'level' attribute.")
+                        
+        self._name = name
+        self._level = level
+        self._salary = Employee._base_salaries[level]
         
-        for i, movie in enumerate(self.items, 1):
-            result += f"{i}. {movie}\n"
-        return result
+    def __str__(self):
+        return f"{self.name}: {self.level}"
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, new_name):
+        if not isinstance(new_name, str):
+            raise TypeError(f"{new_name} must be a string.")
+        else:
+            self._name = new_name
+            print(f"'name' updated to '{self._name}'.")
+    
+    @property
+    def level(self):
+        return self._level
+    
+    @level.setter
+    def level(self, new_level):
+        if new_level not in Employee._base_salaries:
+            raise ValueError(f"Invalid value '{new_level}' for 'level' attribute.")
+        
+        if self._level == new_level:
+            raise ValueError(f"'{self.level}' is already the selected level.")
+        
+        if Employee._base_salaries[new_level] < Employee._base_salaries[self.level]:
+            raise ValueError("Cannot change to lower level.")
 
-catalogue = MediaCatalogue()
+        self._level = new_level
+        self.salary = Employee._base_salaries[self.level]
+        print(f"'{self.name}' promoted to '{self.level}'.")
+    
+    @property
+    def salary(self):
+        return self._salary
+    
+    @salary.setter
+    def salary(self, new_salary):
+        if not isinstance(new_salary, (int, float)):
+            raise TypeError("'salary' must be a number.")
+        
+        if new_salary < self.salary:
+            raise ValueError(f"Salary must be higher than minimum salary ${self.salary}.")
+        
+        self._salary = new_salary
+        print(f'Salary updated to ${self.salary}.')
 
-try:
-    movie1 = Movie("The Matrix", 1999, "The Wachowskis", 136)
-    catalogue.add(movie1)
-    movie2 = Movie("Inception", 2010, "Christopher Nolan", 148)
-    catalogue.add(movie2)
-
-    series1 = TVSeries("Scrubs", 2001, "Bill Lawrence", 24, 9, 182)
-    catalogue.add(series1)
-    series2 = TVSeries("Breaking Bad", 2008, "Vince Gilligan", 47, 5, 62)
-    catalogue.add(series2)
-
-    print(catalogue)
-except ValueError as e:
-    print(f"Validation Error: {e}")
+    
+    def __repr__(self):
+        return f"Employee({self.name}, {self.level})"
+    
+charlie_brown = Employee("Charlie Brown", "trainee")
